@@ -6,6 +6,7 @@ export enum SignatureConfig {
   INJECTEDAPTOS = 5,
   MULTIAPTOS = 6,
   TYPEDETHEREUM = 7,
+  KYVE = 101,
 }
 
 export interface SignatureMeta {
@@ -49,5 +50,10 @@ export const SIG_CONFIG: Record<SignatureConfig, SignatureMeta> = {
     sigLength: 65,
     pubLength: 42,
     sigName: "typedEthereum",
+  },
+  [SignatureConfig.KYVE]: {
+    sigLength: 65,
+    pubLength: 65,
+    sigName: "kyve",
   },
 };
