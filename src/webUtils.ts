@@ -1,17 +1,12 @@
-import type { JWKInterface } from "./interface-jwk";
-export type { default as Transaction } from "@irys/arweave/common/lib/transaction";
-export type { CreateTransactionInterface } from "@irys/arweave/common/arweave";
-import webDriver from "@irys/arweave/web/webcrypto-driver";
-export { stringToBuffer, concatBuffers } from "@irys/arweave/common/lib/utils";
+export { stringToBuffer, concatBuffers } from "arweave/web/lib/utils";
 export { deepHash } from "./deepHash";
-export { Arweave } from "@irys/arweave/web/arweave";
-// import { sha384 as SHA384 } from "sha";
-// export { default as Arweave } from "arweave/web";
-// import type { Hash } from "crypto";
-// export const sha384 = (): Hash => SHA384("sha384");
+import webDriver from "arweave/web/lib/crypto/webcrypto-driver";
+import type { JWKInterface } from "./interface-jwk";
 
-// hack as ESM won't unpack .default CJS imports, so we do so dynamically
-// eslint-disable-next-line @typescript-eslint/dot-notation
+export type { CreateTransactionInterface } from "arweave/web/common";
+export { default as Transaction } from "arweave/web/lib/transaction";
+export { default as Arweave } from "arweave/web";
+
 const driver: typeof webDriver = webDriver["default"] ? webDriver["default"] : webDriver;
 export class CryptoDriver extends driver {
   public getPublicKey(_jwk: JWKInterface): string {
