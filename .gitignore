@@ -30,7 +30,7 @@ coverage
 package-lock.json
 
 # build dirs
-build
+build/web/*
 output
 
 
