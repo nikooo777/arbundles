@@ -1,6 +1,6 @@
 import type { Signer } from "..";
 import { SignatureConfig, SIG_CONFIG } from "../../constants";
-import type Arweave from "@irys/arweave";
+import type Arweave from "arweave";
 import base64url from "base64url";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type * as _ from "arconnect";
