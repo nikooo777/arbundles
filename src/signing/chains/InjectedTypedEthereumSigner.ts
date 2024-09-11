@@ -1,8 +1,30 @@
 import { SignatureConfig, SIG_CONFIG } from "../../constants";
 import { verifyTypedData } from "@ethersproject/wallet";
 import { domain, types } from "./TypedEthereumSigner";
-import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
+// import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
 import type { Signer } from "../index";
+
+// EIP-712 Typed Data
+// See: https://eips.ethereum.org/EIPS/eip-712
+
+export type Bytes = ArrayLike<number>;
+
+export type BytesLike = Bytes | string;
+
+export type BigNumberish = /* BigNumber */ Bytes | bigint | string | number;
+
+export interface TypedDataDomain {
+  name?: string;
+  version?: string;
+  chainId?: BigNumberish;
+  verifyingContract?: string;
+  salt?: BytesLike;
+}
+
+export interface TypedDataField {
+  name: string;
+  type: string;
+}
 
 export interface InjectedTypedEthereumSignerMinimalSigner {
   getAddress: () => Promise<string>;

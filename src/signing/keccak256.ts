@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import BN from "bn.js";
 import { Buffer } from "buffer";
 import createKeccakHash from "keccak";
 
-export function keccak256(value: Buffer | BN | string | number) {
+export function keccak256(value: Buffer | bigint | string | number) {
   value = toBuffer(value);
   return createKeccakHash("keccak256")
     .update(value as Buffer)
@@ -22,13 +21,10 @@ function toBuffer(value: any) {
       }
     } else if (typeof value === "number") {
       value = intToBuffer(value);
+    } else if (typeof value === "bigint") {
+      value = bigintToBuffer(value);
     } else if (value === null || value === undefined) {
       value = Buffer.allocUnsafe(0);
-    } else if (BN.isBN(value)) {
-      value = value.toArrayLike(Buffer);
-    } else if (value.toArray) {
-      // converts a BN to a Buffer
-      value = Buffer.from(value.toArray());
     } else {
       throw new Error("invalid type");
     }
@@ -85,6 +81,11 @@ function intToBuffer(i: number) {
 function intToHex(i: number) {
   const hex = i.toString(16);
   return `0x${hex}`;
+}
+
+function bigintToBuffer(value: bigint) {
+  const hex = value.toString(16);
+  return Buffer.from(padToEven(hex), "hex");
 }
 
 if (typeof window !== "undefined") {

@@ -1,9 +1,18 @@
 import type { Signer } from "../index";
 import base64url from "base64url";
 import { SIG_CONFIG } from "../../constants";
-// @ts-expect-error types
-import type { MessageSignerWalletAdapter } from "@solana/wallet-adapter-base";
+
+// import type { MessageSignerWalletAdapter } from "@solana/wallet-adapter-base";
+
 import { verify } from "@noble/ed25519";
+
+// Minimal interface to be compatible with the Solana Wallet Adapter
+interface MessageSignerWalletAdapter {
+  publicKey: {
+    toBuffer: () => Buffer;
+  };
+  signMessage: (message: Uint8Array) => Promise<Uint8Array>;
+}
 
 export default class InjectedSolanaSigner implements Signer {
   private readonly _publicKey: Buffer;
