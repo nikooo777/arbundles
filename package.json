@@ -1,14 +1,9 @@
 {
   "name": "@ar.io/arbundles",
   "version": "1.0.1",
-  "description": "Arweave bundling library",
-  "author": {
-    "name": "Permanent Data Solutions Inc",
-    "email": "info@ar.io",
-    "website": "https://ar.io"
-  },
+  "description": "Bundle Service Library",
   "license": "Apache-2.0",
-  "repository": "https://github.com/ar-io/arbundles",
+  "repository": "https://github.com/dha-team/arbundles",
   "main": "build/node/cjs/index.js",
   "module": "build/node/esm/index.js",
   "browser": "build/web/esm/webIndex.js",
