@@ -1,6 +1,6 @@
 {
   "name": "@ar.io/arbundles",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Arweave bundling library",
   "author": {
     "name": "Permanent Data Solutions Inc",
@@ -91,7 +91,6 @@
     "prepare": "yarn run ensure-build"
   },
   "devDependencies": {
-    "@solana/wallet-adapter-base": "^0.9.23",
     "@types/bs58": "^4.0.1",
     "@types/jest": "^29.2.5",
     "@types/multistream": "^2.1.1",
