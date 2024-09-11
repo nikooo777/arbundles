@@ -1,6 +1,5 @@
 import type { Signer } from "..";
 import { SignatureConfig, SIG_CONFIG } from "../../constants";
-import type Arweave from "arweave";
 import base64url from "base64url";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type * as _ from "arconnect";
@@ -12,10 +11,8 @@ export default class InjectedArweaveSigner implements Signer {
   readonly ownerLength: number = SIG_CONFIG[SignatureConfig.ARWEAVE].pubLength;
   readonly signatureLength: number = SIG_CONFIG[SignatureConfig.ARWEAVE].sigLength;
   readonly signatureType: SignatureConfig = SignatureConfig.ARWEAVE;
-  protected arweave: Arweave;
-  constructor(windowArweaveWallet: Window["arweaveWallet"], arweave: Arweave) {
+  constructor(windowArweaveWallet: Window["arweaveWallet"]) {
     this.signer = windowArweaveWallet;
-    this.arweave = arweave;
   }
 
   async setPublicKey(): Promise<void> {
