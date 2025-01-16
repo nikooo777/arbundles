@@ -14,6 +14,9 @@ import type { Base64URLString } from "./types";
 
 export const MIN_BINARY_SIZE = 80;
 export const MAX_TAG_BYTES = 4096;
+export const MAX_TAGS = 128;
+export const MAX_TAG_KEY_LENGTH = 1024;
+export const MAX_TAG_VALUE_LENGTH = 3072;
 
 export class DataItem implements BundleItem {
   private readonly binary: Buffer;
@@ -211,33 +214,54 @@ export class DataItem implements BundleItem {
     }
     const item = new DataItem(buffer);
     const sigType = item.signatureType;
-    const tagsStart = item.getTagsStart();
-
+    const targetStart = item.getTargetStart();
+    const targetPresent = buffer[targetStart] === 1;
+    let anchorStart = targetStart + (targetPresent ? 33 : 1);
+    const anchorPresent = buffer[anchorStart] === 1;
+    const anchor = anchorPresent ? buffer.subarray(anchorStart + 1, anchorStart + 33) : Buffer.alloc(0);
+    if (anchor.length > 32) {
+      return false;
+    }
+    anchorStart += anchorPresent ? 33 : 1;
+    const tagsStart = anchorStart;
     const numberOfTags = byteArrayToLong(buffer.subarray(tagsStart, tagsStart + 8));
+    if (numberOfTags > MAX_TAGS) {
+      return false;
+    }
     const numberOfTagBytesArray = buffer.subarray(tagsStart + 8, tagsStart + 16);
     const numberOfTagBytes = byteArrayToLong(numberOfTagBytesArray);
-
-    if (numberOfTagBytes > MAX_TAG_BYTES) return false;
-
     if (numberOfTags > 0) {
       try {
         const tags: { name: string; value: string }[] = deserializeTags(
           Buffer.from(buffer.subarray(tagsStart + 16, tagsStart + 16 + numberOfTagBytes)),
         );
-
         if (tags.length !== numberOfTags) {
           return false;
         }
-      } catch (e) {
+        for (const t of tags) {
+          if (!t.name || !t.value) {
+            return false;
+          }
+          const nameLen = Buffer.byteLength(t.name);
+          const valueLen = Buffer.byteLength(t.value);
+          if (nameLen === 0 || nameLen > MAX_TAG_KEY_LENGTH) {
+            return false;
+          }
+          if (valueLen === 0 || valueLen > MAX_TAG_VALUE_LENGTH) {
+            return false;
+          }
+        }
+      } catch (err) {
         return false;
       }
     }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const Signer = indexToType[sigType];
-
+    const signatureHash = createHash("sha256").update(item.rawSignature).digest();
+    if (!signatureHash.equals(item.rawId)) {
+      return false;
+    }
     const signatureData = await getSignatureData(item);
-    return await Signer.verify(item.rawOwner, signatureData, item.rawSignature);
+    const signer = indexToType[sigType];
+    return await signer.verify(item.rawOwner, signatureData, item.rawSignature);
   }
 
   public async getSignatureData(): Promise<Uint8Array> {
